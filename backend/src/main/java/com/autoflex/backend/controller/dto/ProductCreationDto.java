@@ -9,11 +9,7 @@ public record ProductCreationDto(
     String code,
     String name,
     BigDecimal price,
-    List<ProductRawMaterial> rawMaterials
+    List<ProductRawMaterialCreationDto> rawMaterials
 ) {
-
-  public Product toEntity() {
-    return new Product(code, name, price, rawMaterials);
-  }
 
 }

@@ -41,9 +41,8 @@ public class ProductRawMaterial {
    * @param rawMaterial      the raw material
    * @param requiredQuantity the required quantity
    */
-  public ProductRawMaterial(Long id, Product product, RawMaterial rawMaterial,
+  public ProductRawMaterial(Product product, RawMaterial rawMaterial,
       BigDecimal requiredQuantity) {
-    this.id = id;
     this.product = product;
     this.rawMaterial = rawMaterial;
     this.requiredQuantity = requiredQuantity;
