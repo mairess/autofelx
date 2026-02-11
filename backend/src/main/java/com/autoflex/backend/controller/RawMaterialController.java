@@ -6,6 +6,7 @@ import com.autoflex.backend.entity.RawMaterial;
 import com.autoflex.backend.service.RawMaterialService;
 import com.autoflex.backend.service.exception.RawMaterialAlreadyExistsException;
 import com.autoflex.backend.service.exception.RawMaterialNotFoundException;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,7 +46,8 @@ public class RawMaterialController {
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public RawMaterialResponseDto create(@RequestBody RawMaterialCreationDto rawMaterialCreationDto)
+  public RawMaterialResponseDto create(
+      @RequestBody @Valid RawMaterialCreationDto rawMaterialCreationDto)
       throws RawMaterialAlreadyExistsException {
     RawMaterial saved = rawMaterialService.create(rawMaterialCreationDto.toEntity());
     return RawMaterialResponseDto.fromEntity(saved);
