@@ -8,6 +8,7 @@ import com.autoflex.backend.service.ProductService;
 import com.autoflex.backend.service.exception.ProductAlreadyExistsException;
 import com.autoflex.backend.service.exception.ProductNotFoundException;
 import com.autoflex.backend.service.exception.RawMaterialNotFoundException;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class ProductController {
    */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public ProductResponseDto create(@RequestBody ProductCreationDto productCreationDto)
+  public ProductResponseDto create(@RequestBody @Valid ProductCreationDto productCreationDto)
       throws ProductAlreadyExistsException, RawMaterialNotFoundException {
 
     return ProductResponseDto.fromEntity(productService.create(productCreationDto));
@@ -82,8 +83,8 @@ public class ProductController {
   /**
    * Update product response dto.
    *
-   * @param id  the id
-   * @param dto the dto
+   * @param id                 the id
+   * @param productCreationDto the product creation dto
    * @return the product response dto
    * @throws ProductNotFoundException      the product not found exception
    * @throws ProductAlreadyExistsException the product already exists exception
