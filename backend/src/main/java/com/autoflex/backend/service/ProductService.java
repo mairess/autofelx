@@ -19,21 +19,12 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 
-/**
- * The type Product service.
- */
 @Service
 public class ProductService {
 
   private final ProductRepository productRepository;
   private final RawMaterialService rawMaterialService;
 
-  /**
-   * Instantiates a new Product service.
-   *
-   * @param productRepository  the product repository
-   * @param rawMaterialService the raw material service
-   */
   public ProductService(ProductRepository productRepository,
       RawMaterialService rawMaterialService) {
     this.productRepository = productRepository;
@@ -41,16 +32,8 @@ public class ProductService {
   }
 
 
-  /**
-   * Create product.
-   *
-   * @param productCreationDto the product creation dto
-   * @return the product
-   * @throws ProductAlreadyExistsException the product already exists exception
-   * @throws RawMaterialNotFoundException  the raw material not found exception
-   */
   public Product create(ProductCreationDto productCreationDto)
-      throws ProductAlreadyExistsException, RawMaterialNotFoundException {
+      throws RawMaterialNotFoundException {
 
     Product product = new Product();
     product.setCode(productCreationDto.code());
@@ -84,48 +67,20 @@ public class ProductService {
     return productRepository.save(product);
   }
 
-  /**
-   * Find all list.
-   *
-   * @return the list
-   */
   public List<Product> findAll() {
     return productRepository.findAllWithRawMaterials();
   }
 
-  /**
-   * Find by id product.
-   *
-   * @param id the id
-   * @return the product
-   * @throws ProductNotFoundException the product not found exception
-   */
   public Product findById(Long id) throws ProductNotFoundException {
     return productRepository.findById(id)
         .orElseThrow(ProductNotFoundException::new);
   }
 
-  /**
-   * Delete.
-   *
-   * @param id the id
-   * @throws ProductNotFoundException the product not found exception
-   */
   public void delete(Long id) throws ProductNotFoundException {
     Product existing = findById(id);
     productRepository.delete(existing);
   }
 
-  /**
-   * Update product.
-   *
-   * @param id                 the id
-   * @param productCreationDto the product creation dto
-   * @return the product
-   * @throws ProductNotFoundException      the product not found exception
-   * @throws ProductAlreadyExistsException the product already exists exception
-   * @throws RawMaterialNotFoundException  the raw material not found exception
-   */
   public Product update(Long id, ProductCreationDto productCreationDto)
       throws ProductNotFoundException, ProductAlreadyExistsException, RawMaterialNotFoundException {
 
@@ -168,41 +123,16 @@ public class ProductService {
     return productRepository.save(existing);
   }
 
-  /**
-   * Gets production suggestions.
-   *
-   * @return the production suggestions
-   */
   public List<ProductionSuggestionDto> getProductionSuggestions() {
 
     List<Product> products = productRepository.findAllWithRawMaterials();
 
     products.sort(Comparator.comparing(Product::getPrice).reversed());
 
-    Map<Long, BigDecimal> stockMap = new HashMap<>();
-
-    for (Product product : products) {
-      if (product.getRawMaterials() == null) {
-        continue;
-      }
-
-      for (ProductRawMaterial prm : product.getRawMaterials()) {
-        if (prm.getRawMaterial() == null) {
-          continue;
-        }
-
-        RawMaterial rm = prm.getRawMaterial();
-
-        stockMap.putIfAbsent(
-            rm.getId(),
-            rm.getStockQuantity() == null ? BigDecimal.ZERO : rm.getStockQuantity()
-        );
-      }
-    }
+    Map<Long, BigDecimal> stockMap = getDecimalStockMap(products);
 
     List<ProductionSuggestionDto> result = new ArrayList<>();
 
-    // 3) Para cada produto, calcula quantas unidades dá pra fazer com o estoque ATUAL
     for (Product product : products) {
 
       if (product.getRawMaterials() == null || product.getRawMaterials().isEmpty()) {
@@ -215,17 +145,17 @@ public class ProductService {
         continue;
       }
 
-      // 4) Desconta estoque do produto produzido
-      for (ProductRawMaterial prm : product.getRawMaterials()) {
+      for (ProductRawMaterial productRawMaterial : product.getRawMaterials()) {
 
-        if (prm.getRawMaterial() == null || prm.getRequiredQuantity() == null) {
+        if (productRawMaterial.getRawMaterial() == null
+            || productRawMaterial.getRequiredQuantity() == null) {
           continue;
         }
 
-        Long rmId = prm.getRawMaterial().getId();
-        BigDecimal required = prm.getRequiredQuantity();
+        Long productRawMaterialId = productRawMaterial.getRawMaterial().getId();
+        BigDecimal required = productRawMaterial.getRequiredQuantity();
 
-        BigDecimal currentStock = stockMap.getOrDefault(rmId, BigDecimal.ZERO);
+        BigDecimal currentStock = stockMap.getOrDefault(productRawMaterialId, BigDecimal.ZERO);
 
         BigDecimal used = required.multiply(maxUnits);
 
@@ -235,7 +165,7 @@ public class ProductService {
           newStock = BigDecimal.ZERO;
         }
 
-        stockMap.put(rmId, newStock);
+        stockMap.put(productRawMaterialId, newStock);
       }
 
       BigDecimal totalValue = maxUnits.multiply(product.getPrice());
@@ -252,6 +182,31 @@ public class ProductService {
     return result;
   }
 
+  private static Map<Long, BigDecimal> getDecimalStockMap(List<Product> products) {
+    Map<Long, BigDecimal> stockMap = new HashMap<>();
+
+    for (Product product : products) {
+      if (product.getRawMaterials() == null) {
+        continue;
+      }
+
+      for (ProductRawMaterial productRawMaterial : product.getRawMaterials()) {
+        if (productRawMaterial.getRawMaterial() == null) {
+          continue;
+        }
+
+        RawMaterial rawMaterial = productRawMaterial.getRawMaterial();
+
+        stockMap.putIfAbsent(
+            rawMaterial.getId(),
+            rawMaterial.getStockQuantity() == null ? BigDecimal.ZERO
+                : rawMaterial.getStockQuantity()
+        );
+      }
+    }
+    return stockMap;
+  }
+
   private BigDecimal calculateMaxUnitsUsingStockMap(
       Product product,
       Map<Long, BigDecimal> stockMap
@@ -259,20 +214,21 @@ public class ProductService {
 
     BigDecimal maxUnits = null;
 
-    for (ProductRawMaterial prm : product.getRawMaterials()) {
+    for (ProductRawMaterial productRawMaterial : product.getRawMaterials()) {
 
-      if (prm.getRawMaterial() == null || prm.getRequiredQuantity() == null) {
+      if (productRawMaterial.getRawMaterial() == null
+          || productRawMaterial.getRequiredQuantity() == null) {
         continue;
       }
 
-      BigDecimal required = prm.getRequiredQuantity();
+      BigDecimal required = productRawMaterial.getRequiredQuantity();
 
       if (required.compareTo(BigDecimal.ZERO) <= 0) {
         continue;
       }
 
-      Long rmId = prm.getRawMaterial().getId();
-      BigDecimal stock = stockMap.getOrDefault(rmId, BigDecimal.ZERO);
+      Long rawMaterialId = productRawMaterial.getRawMaterial().getId();
+      BigDecimal stock = stockMap.getOrDefault(rawMaterialId, BigDecimal.ZERO);
 
       BigDecimal possible = stock.divide(required, 0, RoundingMode.DOWN);
 
