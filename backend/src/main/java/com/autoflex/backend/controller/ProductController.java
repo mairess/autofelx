@@ -92,10 +92,10 @@ public class ProductController {
   @PutMapping("/{id}")
   public ProductResponseDto update(
       @PathVariable Long id,
-      @RequestBody ProductCreationDto dto
+      @RequestBody ProductCreationDto productCreationDto
   ) throws ProductNotFoundException, ProductAlreadyExistsException, RawMaterialNotFoundException {
 
-    Product updated = productService.update(id, dto);
+    Product updated = productService.update(id, productCreationDto);
     return ProductResponseDto.fromEntity(updated);
   }
 
@@ -118,6 +118,7 @@ public class ProductController {
    */
   @GetMapping("/production-suggestions")
   public List<ProductionSuggestionDto> suggestions() {
+    System.out.println("asdad");
     return productService.getProductionSuggestions();
   }
 }

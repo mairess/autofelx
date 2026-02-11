@@ -77,6 +77,10 @@ public class ProductService {
 
     product.setRawMaterials(list);
 
+    for (ProductRawMaterial productRawMaterial : list) {
+      productRawMaterial.setProduct(product);
+    }
+
     return productRepository.save(product);
   }
 
@@ -86,7 +90,7 @@ public class ProductService {
    * @return the list
    */
   public List<Product> findAll() {
-    return productRepository.findAllWithMaterials();
+    return productRepository.findAllWithRawMaterials();
   }
 
   /**
@@ -127,7 +131,6 @@ public class ProductService {
 
     Product existing = findById(id);
 
-    // 1) valida code duplicado
     if (!existing.getCode().equals(productCreationDto.code()) && productRepository.existsByCode(
         productCreationDto.code())) {
       throw new ProductAlreadyExistsException();
@@ -137,11 +140,11 @@ public class ProductService {
     existing.setName(productCreationDto.name());
     existing.setPrice(productCreationDto.price());
 
-    if (existing.getRawMaterials() != null) {
-      existing.getRawMaterials().clear();
+    if (existing.getRawMaterials() == null) {
+      existing.setRawMaterials(new ArrayList<>());
     }
 
-    List<ProductRawMaterial> newList = new ArrayList<>();
+    existing.getRawMaterials().clear();
 
     if (productCreationDto.rawMaterials() != null) {
 
@@ -150,17 +153,17 @@ public class ProductService {
         RawMaterial rawMaterial = rawMaterialService.findById(
             productRawMaterialCreationDto.rawMaterialId());
 
-        ProductRawMaterial prm = new ProductRawMaterial(
+        ProductRawMaterial productRawMaterial = new ProductRawMaterial(
             existing,
             rawMaterial,
             productRawMaterialCreationDto.requiredQuantity()
         );
 
-        newList.add(prm);
+        productRawMaterial.setProduct(existing);
+
+        existing.getRawMaterials().add(productRawMaterial);
       }
     }
-
-    existing.setRawMaterials(newList);
 
     return productRepository.save(existing);
   }
@@ -172,7 +175,7 @@ public class ProductService {
    */
   public List<ProductionSuggestionDto> getProductionSuggestions() {
 
-    List<Product> products = productRepository.findAllWithMaterials();
+    List<Product> products = productRepository.findAllWithRawMaterials();
 
     products.sort(Comparator.comparing(Product::getPrice).reversed());
 

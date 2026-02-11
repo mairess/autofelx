@@ -29,8 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         select distinct p
         from Product p
         left join fetch p.rawMaterials prm
-        left join fetch prm.rawMaterial
       """)
-  List<Product> findAllWithMaterials();
+  List<Product> findAllWithRawMaterials();
 
 }
