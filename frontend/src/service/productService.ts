@@ -1,8 +1,8 @@
-import type { ProductCreationType, ProductResponseType } from '../types/product';
-import api from './api';
+import type { ProductCreationType, ProductResponseType } from "../types/product";
+import api from "./api";
 
 export const getAllProducts = async () => {
-  const response = await api.get<ProductResponseType[]>('/products');
+  const response = await api.get<ProductResponseType[]>("/products");
   return response.data;
 };
 
@@ -12,7 +12,7 @@ export const getProductById = async (id: number) => {
 };
 
 export const createProduct = async (data: ProductCreationType) => {
-  const response = await api.post<ProductResponseType>('/products', data);
+  const response = await api.post<ProductResponseType>("/products", data);
   return response.data;
 };
 

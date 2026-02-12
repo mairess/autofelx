@@ -1,8 +1,8 @@
-import type { RawMaterialCreationType, RawMaterialResponseType } from '../types/rawMaterial';
-import api from './api';
+import type { RawMaterialCreationType, RawMaterialResponseType } from "../types/rawMaterial";
+import api from "./api";
 
 export const getAllRawMaterials = async () => {
-  const response =  await api.get<RawMaterialResponseType[]>('/raw-materials');
+  const response =  await api.get<RawMaterialResponseType[]>("/raw-materials");
   return response.data;
 };
 
@@ -12,7 +12,7 @@ export const getRawMaterialById = async (id: number) => {
 };
 
 export const createRawMaterial = async (data: RawMaterialCreationType) => {
-  const response =  await api.post<RawMaterialResponseType>('/raw-materials', data);
+  const response =  await api.post<RawMaterialResponseType>("/raw-materials", data);
   return response.data;
 };
 

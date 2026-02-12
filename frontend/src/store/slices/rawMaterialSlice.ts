@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+
 import * as rawMaterialService from "../../service/rawMaterialService";
 import type { RawMaterialResponseType } from "../../types/rawMaterial";
 
@@ -14,16 +15,16 @@ const initialState: State = {
 
 export const fetchRawMaterials = createAsyncThunk(
   "rawMaterials/fetchAll",
-  rawMaterialService.getAllRawMaterials
+  rawMaterialService.getAllRawMaterials,
 );
 
 const slice = createSlice({
   name: "rawMaterials",
   initialState,
   reducers: {},
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchRawMaterials.pending, s => {
+      .addCase(fetchRawMaterials.pending, (s) => {
         s.loading = true;
       })
       .addCase(fetchRawMaterials.fulfilled, (s, a) => {
