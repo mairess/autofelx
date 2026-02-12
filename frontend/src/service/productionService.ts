@@ -1,6 +1,7 @@
 import type { ProductionSuggestionType } from '../types/production';
 import api from './api';
 
-export const getProductionSuggestions = () => {
-  return api.get<ProductionSuggestionType[]>('/production-suggestions');
+export const getProductionSuggestions = async () => {
+  const response = await api.get<ProductionSuggestionType[]>('products/production-suggestions');
+  return response.data;
 };
