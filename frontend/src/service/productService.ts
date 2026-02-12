@@ -1,22 +1,26 @@
-import type { ProductCreationType, ProductResponseType } from '../types/product';
-import api from './api';
+import type { ProductCreationType, ProductResponseType } from "../types/product";
+import api from "./api";
 
-export const getAllProducts = () => {
-  return api.get<ProductResponseType[]>('/products');
+export const getAllProducts = async () => {
+  const response = await api.get<ProductResponseType[]>("/products");
+  return response.data;
 };
 
-export const getProductById = (id: number) => {
-  return api.get<ProductResponseType>(`/products/${id}`);
+export const getProductById = async (id: number) => {
+  const response = await api.get<ProductResponseType>(`/products/${id}`);
+  return response.data;
 };
 
-export const createProduct = (data: ProductCreationType) => {
-  return api.post<ProductResponseType>('/products', data);
+export const createProduct = async (data: ProductCreationType) => {
+  const response = await api.post<ProductResponseType>("/products", data);
+  return response.data;
 };
 
-export const updateProduct = (id: number, data: ProductCreationType) => {
-  return api.put<ProductResponseType>(`/products/${id}`, data);
+export const updateProduct = async (id: number, data: ProductCreationType) => {
+  const response = await api.put<ProductResponseType>(`/products/${id}`, data);
+  return response.data;
 };
 
-export const deleteProduct = (id: number) => {
-  return api.delete<void>(`/products/${id}`);
+export const deleteProduct = async (id: number) => {
+  await api.delete<void>(`/products/${id}`);
 };

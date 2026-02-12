@@ -1,22 +1,26 @@
-import type { RawMaterialCreationType, RawMaterialResponseType } from '../types/rawMaterial';
-import api from './api';
+import type { RawMaterialCreationType, RawMaterialResponseType } from "../types/rawMaterial";
+import api from "./api";
 
-export const getAllRawMaterials = () => {
-  return api.get<RawMaterialResponseType[]>('/raw-materials');
+export const getAllRawMaterials = async () => {
+  const response =  await api.get<RawMaterialResponseType[]>("/raw-materials");
+  return response.data;
 };
 
-export const getRawMaterialById = (id: number) => {
-  return api.get<RawMaterialResponseType>(`/raw-materials/${id}`);
+export const getRawMaterialById = async (id: number) => {
+  const response =  await api.get<RawMaterialResponseType>(`/raw-materials/${id}`);
+  return response.data;
 };
 
-export const createRawMaterial = (data: RawMaterialCreationType) => {
-  return api.post<RawMaterialResponseType>('/raw-materials', data);
+export const createRawMaterial = async (data: RawMaterialCreationType) => {
+  const response =  await api.post<RawMaterialResponseType>("/raw-materials", data);
+  return response.data;
 };
 
-export const updateRawMaterial = (id: number, data: RawMaterialCreationType) => {
-  return api.put<RawMaterialResponseType>(`/raw-materials/${id}`, data);
+export const updateRawMaterial = async (id: number, data: RawMaterialCreationType) => {
+  const response =  await api.put<RawMaterialResponseType>(`/raw-materials/${id}`, data);
+  return response.data;
 };
 
-export const deleteRawMaterial = (id: number) => {
-  return api.delete<void>(`/raw-materials/${id}`);
+export const deleteRawMaterial = async (id: number) => {
+  await api.delete<void>(`/raw-materials/${id}`);
 };
