@@ -6,7 +6,7 @@ import RawMaterialForm from "../components/RawMaterials/RawMaterialForm";
 import RawMaterialItem from "../components/RawMaterials/RawMaterialItem";
 import type { RawMaterialResponseType } from "../types/rawMaterial";
 
-const RawMaterialsPage: React.FC = () => {
+function RawMaterialsPage() {
   const dispatch = useAppDispatch();
   const [error, setError] = useState<string | null>(null);
   const { items } = useAppSelector((s) => s.rawMaterials);

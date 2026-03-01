@@ -21,10 +21,7 @@ const buildFormState = (data?: ProductResponseType) => ({
     : ([] as ProductRawMaterialFormType[]),
 });
 
-const ProductForm: React.FC<ProductFormProps> = ({
-  initialData,
-  onFinish,
-}) => {
+function ProductForm({ initialData, onFinish }: ProductFormProps) {
   const dispatch = useAppDispatch();
   const rawMaterials = useAppSelector((s) => s.rawMaterials.items);
   const [error, setError] = useState<string | null>(null);

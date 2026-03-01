@@ -11,12 +11,7 @@ interface RawMaterialFormProps {
   setError: (value: string | null) => void;
 }
 
-const RawMaterialForm: React.FC<RawMaterialFormProps> = ({
-  initialData,
-  onFinish,
-  setError,
-  error,
-}) => {
+function RawMaterialForm ({ initialData, onFinish, setError, error }: RawMaterialFormProps) {
   const dispatch = useAppDispatch();
 
   const [form, setForm] = useState<RawMaterialCreationType>(() => ({
