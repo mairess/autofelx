@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 import { useAppDispatch } from "../../store/hooks";
 import { deleteRawMaterial } from "../../store/slices/rawMaterialSlice";
 import type { RawMaterialResponseType } from "../../types/rawMaterial";
@@ -5,24 +7,33 @@ import type { RawMaterialResponseType } from "../../types/rawMaterial";
 interface RawMaterialItemProps {
   rawMaterial: RawMaterialResponseType;
   onEdit: () => void;
-  setError: (value: string) => void;
 }
 
-function RawMaterialItem({ rawMaterial, onEdit, setError }: RawMaterialItemProps) {
+function RawMaterialItem({ rawMaterial, onEdit }: RawMaterialItemProps) {
   const dispatch = useAppDispatch();
 
   const handleDelete = async () => {
-    const confirmed = confirm(
-      `Are you sure you want to delete "${rawMaterial.name}"?`,
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await dispatch(deleteRawMaterial(rawMaterial.id)).unwrap();
-    } catch (error) {
-      setError(String(error));
-    }
+    toast("Are you sure you want to delete?", {
+      action: {
+        label: "Yes, delete",
+        onClick: () => {
+          toast.promise(
+            dispatch(deleteRawMaterial(rawMaterial.id)).unwrap(),
+            {
+              loading: "Deleting...",
+              success: "Deleted successfully",
+              error: (err) => {
+                return err || "Failed to delete";
+              },
+            },
+          );
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    });
   };
 
   return (

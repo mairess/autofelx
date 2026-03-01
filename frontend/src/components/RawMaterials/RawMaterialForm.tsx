@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 import { useAppDispatch } from "../../store/hooks";
 import { createRawMaterial, updateRawMaterial } from "../../store/slices/rawMaterialSlice";
@@ -7,11 +8,9 @@ import type { RawMaterialCreationType, RawMaterialResponseType } from "../../typ
 interface RawMaterialFormProps {
   initialData?: RawMaterialResponseType;
   onFinish?: () => void;
-  error: string | null;
-  setError: (value: string | null) => void;
 }
 
-function RawMaterialForm ({ initialData, onFinish, setError, error }: RawMaterialFormProps) {
+function RawMaterialForm ({ initialData, onFinish }: RawMaterialFormProps) {
   const dispatch = useAppDispatch();
 
   const [form, setForm] = useState<RawMaterialCreationType>(() => ({
@@ -24,43 +23,38 @@ function RawMaterialForm ({ initialData, onFinish, setError, error }: RawMateria
     event.preventDefault();
 
     if (!form.code.trim()) {
-      setError("Code is required");
+      toast.error("Code is required");
       return;
     }
 
     if (!form.name.trim()) {
-      setError("Name is required");
+      toast.error("Name is required");
       return;
     }
 
     if (form.stockQuantity < 0) {
-      setError("Stock quantity cannot be negative");
+      toast.error("Stock quantity cannot be negative");
       return;
     }
-
-    setError(null);
 
     try {
       if (initialData) {
         await dispatch(
           updateRawMaterial({ id: initialData.id, data: form }),
         ).unwrap();
+
+        toast.success("Raw material updated successfully!");
       } else {
         await dispatch(createRawMaterial(form)).unwrap();
+        toast.success("Raw material created successfully!");
       }
-
-      setError(null);
 
       onFinish?.();
 
-      setForm({
-        code: "",
-        name: "",
-        stockQuantity: 0,
-      });
+      setForm({ code: "", name: "", stockQuantity: 0 });
 
     } catch (err) {
-      setError(String(err));
+      toast.error(String(err));
     }
   };
 
@@ -104,12 +98,6 @@ function RawMaterialForm ({ initialData, onFinish, setError, error }: RawMateria
         className="w-full border rounded-lg px-3 py-2"
       />
 
-      {error && (
-        <div className="bg-red-100 text-red-700 px-4 py-2 rounded">
-          {error}
-        </div>
-      )}
-
       <div className="flex gap-3">
         <button
           type="submit"
@@ -122,11 +110,7 @@ function RawMaterialForm ({ initialData, onFinish, setError, error }: RawMateria
           <button
             type="button"
             onClick={() => {
-              setForm({
-                code: "",
-                name: "",
-                stockQuantity: 0,
-              });
+              setForm({ code: "", name: "", stockQuantity: 0 });
               onFinish?.();
             }}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition border cursor-pointer"
