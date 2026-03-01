@@ -6,7 +6,7 @@ import { fetchRawMaterials } from "../store/slices/rawMaterialSlice";
 import ProductForm from "../components/Product/ProductForm";
 import type { ProductResponseType } from "../types/product";
 
-const ProductsPage: React.FC = () => {
+function ProductsPage(){
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((s) => s.products);
   const rawMaterials = useAppSelector((s) => s.rawMaterials.items);

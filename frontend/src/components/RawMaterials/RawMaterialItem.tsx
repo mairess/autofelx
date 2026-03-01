@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useAppDispatch } from "../../store/hooks";
 import { deleteRawMaterial } from "../../store/slices/rawMaterialSlice";
 import type { RawMaterialResponseType } from "../../types/rawMaterial";
@@ -10,11 +8,7 @@ interface RawMaterialItemProps {
   setError: (value: string) => void;
 }
 
-const RawMaterialItem: React.FC<RawMaterialItemProps> = ({
-  rawMaterial,
-  onEdit,
-  setError,
-}) => {
+function RawMaterialItem({ rawMaterial, onEdit, setError }: RawMaterialItemProps) {
   const dispatch = useAppDispatch();
 
   const handleDelete = async () => {

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Header: React.FC = () => {
+function Header() {
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">

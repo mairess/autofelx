@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchProductionSuggestions } from "../../store/slices/productionSlice";
 
-const ProductionDashboard: React.FC = () => {
+function ProductionDashboard() {
   const dispatch = useAppDispatch();
   const { items, loading } = useAppSelector((state) => state.production);
 

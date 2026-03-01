@@ -1,8 +1,6 @@
-import React from "react";
-
 import ProductionDashboard from "../components/Production/ProductionDashboard";
 
-const ProductionPage: React.FC = () => {
+function ProductionPage() {
   return (
     <div className="bg-white rounded-xl shadow-sm border p-6 space-y-6">
       <h1 className="text-2xl font-bold text-gray-800">
