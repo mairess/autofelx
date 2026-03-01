@@ -51,11 +51,7 @@ function RawMaterialForm ({ initialData, onFinish }: RawMaterialFormProps) {
 
       onFinish?.();
 
-      setForm({
-        code: "",
-        name: "",
-        stockQuantity: 0,
-      });
+      setForm({ code: "", name: "", stockQuantity: 0 });
 
     } catch (err) {
       toast.error(String(err));
@@ -114,11 +110,7 @@ function RawMaterialForm ({ initialData, onFinish }: RawMaterialFormProps) {
           <button
             type="button"
             onClick={() => {
-              setForm({
-                code: "",
-                name: "",
-                stockQuantity: 0,
-              });
+              setForm({ code: "", name: "", stockQuantity: 0 });
               onFinish?.();
             }}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition border cursor-pointer"

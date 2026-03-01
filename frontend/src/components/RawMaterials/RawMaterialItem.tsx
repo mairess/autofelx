@@ -13,18 +13,27 @@ function RawMaterialItem({ rawMaterial, onEdit }: RawMaterialItemProps) {
   const dispatch = useAppDispatch();
 
   const handleDelete = async () => {
-    const confirmed = confirm(
-      `Are you sure you want to delete "${rawMaterial.name}"?`,
-    );
-
-    if (!confirmed) return;
-
-    try {
-      await dispatch(deleteRawMaterial(rawMaterial.id)).unwrap();
-      toast.success("Raw material deleted successfully!");
-    } catch (error) {
-      toast.error(String(error));
-    }
+    toast("Are you sure you want to delete?", {
+      action: {
+        label: "Yes, delete",
+        onClick: () => {
+          toast.promise(
+            dispatch(deleteRawMaterial(rawMaterial.id)).unwrap(),
+            {
+              loading: "Deleting...",
+              success: "Deleted successfully",
+              error: (err) => {
+                return err || "Failed to delete";
+              },
+            },
+          );
+        },
+      },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {},
+      },
+    });
   };
 
   return (
