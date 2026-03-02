@@ -36,7 +36,7 @@ Run only the database in Docker and run backend/frontend locally.
 
     ```sh
     cd backend
-    mvn clean install
+    mvn clean install -DskipTests
     mvn spring-boot:run
     ```
 
